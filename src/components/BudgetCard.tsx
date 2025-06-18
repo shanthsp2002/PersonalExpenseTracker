@@ -2,6 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { AlertTriangle, CheckCircle, Edit, Trash2 } from 'lucide-react'
 import { Budget, useExpenseStore } from '../store/expenseStore'
+import { AmountDisplay } from './AmountDisplay'
 
 interface BudgetCardProps {
   budget: Budget
@@ -66,8 +67,8 @@ export function BudgetCard({ budget }: BudgetCardProps) {
       
       <div className="space-y-2">
         <div className="flex justify-between text-sm text-gray-600">
-          <span>Spent: ${spent.toLocaleString()}</span>
-          <span>Budget: ${budget.limit.toLocaleString()}</span>
+          <span>Spent: <AmountDisplay amount={spent} size="sm" /></span>
+          <span>Budget: <AmountDisplay amount={budget.limit} size="sm" /></span>
         </div>
         
         <div className="w-full bg-gray-200 rounded-full h-3">
@@ -81,7 +82,15 @@ export function BudgetCard({ budget }: BudgetCardProps) {
           <span className={`text-sm font-medium ${
             remaining >= 0 ? 'text-success-600' : 'text-danger-600'
           }`}>
-            {remaining >= 0 ? `$${remaining.toLocaleString()} remaining` : `$${Math.abs(remaining).toLocaleString()} over budget`}
+            {remaining >= 0 ? (
+              <>
+                <AmountDisplay amount={remaining} size="sm" color="success" /> remaining
+              </>
+            ) : (
+              <>
+                <AmountDisplay amount={Math.abs(remaining)} size="sm" color="danger" /> over budget
+              </>
+            )}
           </span>
           
           <div className="flex space-x-2">

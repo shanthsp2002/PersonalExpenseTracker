@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { X, DollarSign, Tag, Calendar } from 'lucide-react'
+import { X, Tag, Calendar } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { useForm } from 'react-hook-form'
+import { CurrencyInput } from './CurrencyInput'
 import toast from 'react-hot-toast'
 
 interface BudgetFormProps {
@@ -19,8 +20,9 @@ interface FormData {
 export function BudgetForm({ onClose }: BudgetFormProps) {
   const { addBudget } = useExpenseStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [limit, setLimit] = useState(0)
   
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormData>({
     defaultValues: {
       limit: 0,
       period: 'monthly',
@@ -42,11 +44,12 @@ export function BudgetForm({ onClose }: BudgetFormProps) {
   ]
 
   const onSubmit = async (data: FormData) => {
-    set
+    setIsSubmitting(true)
 
     try {
       addBudget({
         ...data,
+        limit,
         spent: 0
       })
       
@@ -97,21 +100,17 @@ export function BudgetForm({ onClose }: BudgetFormProps) {
         {/* Budget Limit */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Budget Limit</label>
-          <div className="relative">
-            <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="number"
-              step="0.01"
-              {...register('limit', { 
-                required: 'Budget limit is required',
-                min: { value: 0.01, message: 'Budget limit must be greater than 0' }
-              })}
-              className="input pl-10"
-              placeholder="0.00"
-            />
-          </div>
-          {errors.limit && (
-            <p className="text-danger-600 text-sm mt-1">{errors.limit.message}</p>
+          <CurrencyInput
+            value={limit}
+            onChange={(value) => {
+              setLimit(value)
+              setValue('limit', value)
+            }}
+            placeholder="0.00"
+            required
+          />
+          {limit <= 0 && (
+            <p className="text-danger-600 text-sm mt-1">Budget limit must be greater than 0</p>
           )}
         </div>
 
@@ -149,7 +148,7 @@ export function BudgetForm({ onClose }: BudgetFormProps) {
         {/* Submit Button */}
         <motion.button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || limit <= 0}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className="btn-primary w-full"

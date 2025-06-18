@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { X, Target, DollarSign, Calendar, Tag } from 'lucide-react'
+import { X, Target, Calendar, Tag } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { useForm } from 'react-hook-form'
+import { CurrencyInput } from './CurrencyInput'
 import toast from 'react-hot-toast'
 
 interface GoalFormProps {
@@ -21,9 +22,12 @@ interface FormData {
 export function GoalForm({ onClose }: GoalFormProps) {
   const { addGoal } = useExpenseStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [targetAmount, setTargetAmount] = useState(0)
+  const [currentAmount, setCurrentAmount] = useState(0)
   
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormData>({
     defaultValues: {
+      targetAmount: 0,
       currentAmount: 0,
       priority: 'medium'
     }
@@ -47,6 +51,8 @@ export function GoalForm({ onClose }: GoalFormProps) {
     try {
       addGoal({
         ...data,
+        targetAmount,
+        currentAmount,
         status: 'active'
       })
       
@@ -92,41 +98,33 @@ export function GoalForm({ onClose }: GoalFormProps) {
         {/* Target Amount */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Target Amount</label>
-          <div className="relative">
-            <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="number"
-              step="0.01"
-              {...register('targetAmount', { 
-                required: 'Target amount is required',
-                min: { value: 0.01, message: 'Target amount must be greater than 0' }
-              })}
-              className="input pl-10"
-              placeholder="0.00"
-            />
-          </div>
-          {errors.targetAmount && (
-            <p className="text-danger-600 text-sm mt-1">{errors.targetAmount.message}</p>
+          <CurrencyInput
+            value={targetAmount}
+            onChange={(value) => {
+              setTargetAmount(value)
+              setValue('targetAmount', value)
+            }}
+            placeholder="0.00"
+            required
+          />
+          {targetAmount <= 0 && (
+            <p className="text-danger-600 text-sm mt-1">Target amount must be greater than 0</p>
           )}
         </div>
 
         {/* Current Amount */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Current Amount</label>
-          <div className="relative">
-            <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="number"
-              step="0.01"
-              {...register('currentAmount', { 
-                min: { value: 0, message: 'Current amount cannot be negative' }
-              })}
-              className="input pl-10"
-              placeholder="0.00"
-            />
-          </div>
-          {errors.currentAmount && (
-            <p className="text-danger-600 text-sm mt-1">{errors.currentAmount.message}</p>
+          <CurrencyInput
+            value={currentAmount}
+            onChange={(value) => {
+              setCurrentAmount(value)
+              setValue('currentAmount', value)
+            }}
+            placeholder="0.00"
+          />
+          {currentAmount < 0 && (
+            <p className="text-danger-600 text-sm mt-1">Current amount cannot be negative</p>
           )}
         </div>
 
@@ -193,7 +191,7 @@ export function GoalForm({ onClose }: GoalFormProps) {
         {/* Submit Button */}
         <motion.button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || targetAmount <= 0}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className="btn-primary w-full"

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { X, DollarSign, Tag, Calendar, FileText } from 'lucide-react'
+import { X, Tag, Calendar, FileText } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { useForm } from 'react-hook-form'
+import { CurrencyInput } from './CurrencyInput'
 import toast from 'react-hot-toast'
 
 interface ExpenseFormProps {
@@ -22,8 +23,9 @@ interface FormData {
 export function ExpenseForm({ onClose, expense }: ExpenseFormProps) {
   const { addExpense, updateExpense } = useExpenseStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [amount, setAmount] = useState(expense?.amount || 0)
   
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
     defaultValues: {
       amount: expense?.amount || 0,
       category: expense?.category || '',
@@ -53,6 +55,7 @@ export function ExpenseForm({ onClose, expense }: ExpenseFormProps) {
     try {
       const expenseData = {
         ...data,
+        amount,
         tags: data.tags.split(',').map(tag => tag.trim()).filter(Boolean),
         date: data.date
       }
@@ -119,21 +122,17 @@ export function ExpenseForm({ onClose, expense }: ExpenseFormProps) {
         {/* Amount */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-          <div className="relative">
-            <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="number"
-              step="0.01"
-              {...register('amount', { 
-                required: 'Amount is required',
-                min: { value: 0.01, message: 'Amount must be greater than 0' }
-              })}
-              className="input pl-10"
-              placeholder="0.00"
-            />
-          </div>
-          {errors.amount && (
-            <p className="text-danger-600 text-sm mt-1">{errors.amount.message}</p>
+          <CurrencyInput
+            value={amount}
+            onChange={(value) => {
+              setAmount(value)
+              setValue('amount', value)
+            }}
+            placeholder="0.00"
+            required
+          />
+          {amount <= 0 && (
+            <p className="text-danger-600 text-sm mt-1">Amount must be greater than 0</p>
           )}
         </div>
 
@@ -205,7 +204,7 @@ export function ExpenseForm({ onClose, expense }: ExpenseFormProps) {
         {/* Submit Button */}
         <motion.button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || amount <= 0}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className="btn-primary w-full"

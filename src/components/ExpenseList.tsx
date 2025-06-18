@@ -12,6 +12,7 @@ import {
 import { Expense, useExpenseStore } from '../store/expenseStore'
 import { format } from 'date-fns'
 import { ExpenseForm } from './ExpenseForm'
+import { AmountDisplay } from './AmountDisplay'
 import toast from 'react-hot-toast'
 
 interface ExpenseListProps {
@@ -79,11 +80,12 @@ export function ExpenseList({ expenses }: ExpenseListProps) {
                       <h4 className="font-semibold text-gray-900 truncate">
                         {expense.description}
                       </h4>
-                      <p className={`font-bold text-lg ${
-                        expense.type === 'income' ? 'text-success-600' : 'text-danger-600'
-                      }`}>
-                        {expense.type === 'income' ? '+' : '-'}${expense.amount.toLocaleString()}
-                      </p>
+                      <AmountDisplay
+                        amount={expense.amount}
+                        size="lg"
+                        color={expense.type === 'income' ? 'success' : 'danger'}
+                        prefix={expense.type === 'income' ? '+' : '-'}
+                      />
                     </div>
                     
                     <div className="flex items-center space-x-4 mt-1">

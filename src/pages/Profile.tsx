@@ -13,6 +13,9 @@ import {
   Target
 } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
+import { CurrencySelector } from '../components/CurrencySelector'
+import { CurrencyInput } from '../components/CurrencyInput'
+import { AmountDisplay } from '../components/AmountDisplay'
 import toast from 'react-hot-toast'
 
 export function Profile() {
@@ -84,6 +87,11 @@ export function Profile() {
         
         <h2 className="text-xl font-semibold text-gray-900">{user?.name}</h2>
         <p className="text-gray-500">{user?.email}</p>
+        <div className="mt-2">
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-primary-100 text-primary-700">
+            Currency: {user?.currency || 'USD'}
+          </span>
+        </div>
         
         <button
           onClick={() => setIsEditing(!isEditing)}
@@ -125,37 +133,24 @@ export function Profile() {
               />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-              <select
-                value={formData.currency}
-                onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                className="input"
-              >
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-                <option value="JPY">JPY (¥)</option>
-              </select>
-            </div>
+            <CurrencySelector
+              value={formData.currency}
+              onChange={(currency) => setFormData({ ...formData, currency })}
+            />
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Income</label>
-              <input
-                type="number"
+              <CurrencyInput
                 value={formData.monthlyIncome}
-                onChange={(e) => setFormData({ ...formData, monthlyIncome: Number(e.target.value) })}
-                className="input"
+                onChange={(value) => setFormData({ ...formData, monthlyIncome: value })}
               />
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Savings Goal</label>
-              <input
-                type="number"
+              <CurrencyInput
                 value={formData.savingsGoal}
-                onChange={(e) => setFormData({ ...formData, savingsGoal: Number(e.target.value) })}
-                className="input"
+                onChange={(value) => setFormData({ ...formData, savingsGoal: value })}
               />
             </div>
             
@@ -192,9 +187,7 @@ export function Profile() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-sm">Total Expenses</p>
-              <p className="text-xl font-semibold text-gray-900">
-                ${totalExpenses.toLocaleString()}
-              </p>
+              <AmountDisplay amount={totalExpenses} size="xl" color="danger" />
             </div>
             <div className="w-10 h-10 bg-danger-100 rounded-lg flex items-center justify-center">
               <DollarSign className="w-5 h-5 text-danger-600" />
@@ -220,6 +213,34 @@ export function Profile() {
           </div>
         </motion.div>
       </div>
+
+      {/* Financial Overview */}
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="card"
+      >
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Financial Overview</h3>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-center p-4 bg-success-50 rounded-lg">
+            <p className="text-sm text-success-600 font-medium">Monthly Income</p>
+            <AmountDisplay 
+              amount={user?.monthlyIncome || 0} 
+              size="lg" 
+              color="success" 
+            />
+          </div>
+          <div className="text-center p-4 bg-primary-50 rounded-lg">
+            <p className="text-sm text-primary-600 font-medium">Savings Goal</p>
+            <AmountDisplay 
+              amount={user?.savingsGoal || 0} 
+              size="lg" 
+              color="primary" 
+            />
+          </div>
+        </div>
+      </motion.div>
 
       {/* Settings */}
       <div className="space-y-4">

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Target, Calendar, TrendingUp, Play, Pause, CheckCircle } from 'lucide-react'
 import { Goal, useExpenseStore } from '../store/expenseStore'
 import { format, differenceInDays } from 'date-fns'
+import { AmountDisplay } from './AmountDisplay'
 
 interface GoalCardProps {
   goal: Goal
@@ -76,8 +77,8 @@ export function GoalCard({ goal }: GoalCardProps) {
         {/* Progress */}
         <div>
           <div className="flex justify-between text-sm text-gray-600 mb-1">
-            <span>${goal.currentAmount.toLocaleString()}</span>
-            <span>${goal.targetAmount.toLocaleString()}</span>
+            <AmountDisplay amount={goal.currentAmount} size="sm" />
+            <AmountDisplay amount={goal.targetAmount} size="sm" />
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div 

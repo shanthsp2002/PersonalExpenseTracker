@@ -15,6 +15,7 @@ import { QuickActions } from '../components/QuickActions'
 import { ExpenseChart } from '../components/ExpenseChart'
 import { RecentTransactions } from '../components/RecentTransactions'
 import { AIInsightCard } from '../components/AIInsightCard'
+import { AmountDisplay } from '../components/AmountDisplay'
 
 export function Dashboard() {
   const { 
@@ -56,9 +57,13 @@ export function Dashboard() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-primary-100 text-sm">Net Income</p>
-            <p className="text-2xl font-bold">
-              ${netIncome.toLocaleString()}
-            </p>
+            <div className="text-2xl font-bold">
+              <AmountDisplay 
+                amount={netIncome} 
+                size="xl" 
+                className="text-white"
+              />
+            </div>
           </div>
           <div>
             <p className="text-primary-100 text-sm">Savings Rate</p>
@@ -80,9 +85,7 @@ export function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-sm">Total Expenses</p>
-              <p className="text-xl font-semibold text-gray-900">
-                ${totalExpenses.toLocaleString()}
-              </p>
+              <AmountDisplay amount={totalExpenses} size="xl" color="danger" />
             </div>
             <div className="w-10 h-10 bg-danger-100 rounded-lg flex items-center justify-center">
               <TrendingDown className="w-5 h-5 text-danger-600" />
@@ -99,9 +102,7 @@ export function Dashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-500 text-sm">Total Income</p>
-              <p className="text-xl font-semibold text-gray-900">
-                ${totalIncome.toLocaleString()}
-              </p>
+              <AmountDisplay amount={totalIncome} size="xl" color="success" />
             </div>
             <div className="w-10 h-10 bg-success-100 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-success-600" />
@@ -179,7 +180,7 @@ export function Dashboard() {
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-medium text-gray-900">{goal.title}</h4>
                   <span className="text-sm text-gray-500">
-                    ${goal.currentAmount} / ${goal.targetAmount}
+                    <AmountDisplay amount={goal.currentAmount} size="sm" /> / <AmountDisplay amount={goal.targetAmount} size="sm" />
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">

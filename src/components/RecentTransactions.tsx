@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { ArrowUpRight, ArrowDownLeft, MoreHorizontal } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { format } from 'date-fns'
+import { AmountDisplay } from './AmountDisplay'
 
 export function RecentTransactions() {
   const { expenses } = useExpenseStore()
@@ -52,11 +53,11 @@ export function RecentTransactions() {
             </div>
             
             <div className="text-right">
-              <p className={`font-semibold ${
-                expense.type === 'income' ? 'text-success-600' : 'text-danger-600'
-              }`}>
-                {expense.type === 'income' ? '+' : '-'}${expense.amount.toLocaleString()}
-              </p>
+              <AmountDisplay
+                amount={expense.amount}
+                color={expense.type === 'income' ? 'success' : 'danger'}
+                prefix={expense.type === 'income' ? '+' : '-'}
+              />
               <p className="text-sm text-gray-500">
                 {format(new Date(expense.date), 'MMM dd')}
               </p>
