@@ -1,4 +1,3 @@
-import React from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { useExpenseStore } from '../store/expenseStore'
 
@@ -34,7 +33,7 @@ export function CategoryBreakdown() {
           />
           <YAxis tick={{ fontSize: 12 }} />
           <Tooltip 
-            formatter={(value, name, props) => [
+            formatter={(value, _name, props) => [
               `$${value.toLocaleString()}`, 
               props.payload.fullCategory
             ]}

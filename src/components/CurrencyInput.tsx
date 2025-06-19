@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { DollarSign } from 'lucide-react'
 import { getCurrencySymbol, parseCurrencyAmount, formatCurrency } from '../utils/currency'
 import { useExpenseStore } from '../store/expenseStore'
 
