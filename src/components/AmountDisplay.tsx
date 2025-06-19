@@ -1,4 +1,3 @@
-import React from 'react'
 import { formatCurrency } from '../utils/currency'
 import { useExpenseStore } from '../store/expenseStore'
 

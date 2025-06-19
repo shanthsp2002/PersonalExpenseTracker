@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { 
   TrendingUp, 
@@ -6,8 +5,7 @@ import {
   Lightbulb, 
   Target,
   Brain,
-  ArrowRight,
-  CheckCircle
+  ArrowRight
 } from 'lucide-react'
 import { AIInsight } from '../store/expenseStore'
 
