@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { TrendingUp, AlertTriangle, CheckCircle, Target } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'

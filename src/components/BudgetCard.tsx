@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { AlertTriangle, CheckCircle, Edit, Trash2 } from 'lucide-react'
 import { Budget, useExpenseStore } from '../store/expenseStore'

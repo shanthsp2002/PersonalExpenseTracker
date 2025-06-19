@@ -3,10 +3,8 @@ import {
   Home, 
   Receipt, 
   PieChart, 
-  Target, 
   Brain,
-  Calendar,
-  User 
+  Calendar
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 
