@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { X, Tag, Calendar, FileText } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
@@ -25,7 +25,7 @@ export function ExpenseForm({ onClose, expense }: ExpenseFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [amount, setAmount] = useState(expense?.amount || 0)
   
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm<FormData>({
     defaultValues: {
       amount: expense?.amount || 0,
       category: expense?.category || '',

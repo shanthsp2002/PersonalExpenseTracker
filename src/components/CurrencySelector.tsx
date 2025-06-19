@@ -1,5 +1,3 @@
-import React from 'react'
-import { motion } from 'framer-motion'
 import { DollarSign, ChevronDown } from 'lucide-react'
 import { SUPPORTED_CURRENCIES, getCurrencyByCode } from '../utils/currency'
 

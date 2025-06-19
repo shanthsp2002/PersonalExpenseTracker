@@ -1,6 +1,5 @@
-import React from 'react'
 import { motion } from 'framer-motion'
-import { Target, Calendar, TrendingUp, Play, Pause, CheckCircle } from 'lucide-react'
+import { Calendar, Play, Pause, CheckCircle } from 'lucide-react'
 import { Goal, useExpenseStore } from '../store/expenseStore'
 import { format, differenceInDays } from 'date-fns'
 import { AmountDisplay } from './AmountDisplay'

@@ -1,5 +1,4 @@
-import React from 'react'
-import { Bell, Search, Menu } from 'lucide-react'
+import { Bell, Search } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 
 export function Header() {

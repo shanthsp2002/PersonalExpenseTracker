@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Target, Trophy, Clock, AlertCircle } from 'lucide-react'
+import { Plus, Target, Trophy } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { GoalCard } from '../components/GoalCard'
 import { GoalForm } from '../components/GoalForm'

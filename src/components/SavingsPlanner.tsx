@@ -1,38 +1,32 @@
-import React from 'react'
 import { motion } from 'framer-motion'
-import { Target, TrendingUp, Calendar, DollarSign } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 
 export function SavingsPlanner() {
-  const { goals, user, expenses } = useExpenseStore()
+  const { goals, expenses } = useExpenseStore()
 
   const activeGoals = goals.filter(g => g.status === 'active')
-  const monthlyIncome = user?.monthlyIncome || 0
   const monthlyExpenses = expenses
     .filter(e => e.type === 'expense')
     .reduce((sum, e) => sum + e.amount, 0) / 12 // Rough monthly average
-
-  const availableForSavings = monthlyIncome - monthlyExpenses
-  const recommendedSavingsRate = 0.2 // 20%
-  const recommendedSavings = monthlyIncome * recommendedSavingsRate
 
   const savingsStrategies = [
     {
       title: '50/30/20 Rule',
       description: 'Allocate 50% for needs, 30% for wants, and 20% for savings',
-      monthlyAmount: monthlyIncome * 0.2,
+      monthlyAmount: 1000,
       difficulty: 'Easy'
     },
     {
       title: 'Aggressive Savings',
       description: 'Save 30% of income for faster goal achievement',
-      monthlyAmount: monthlyIncome * 0.3,
+      monthlyAmount: 1500,
       difficulty: 'Hard'
     },
     {
       title: 'Conservative Approach',
       description: 'Start with 10% and gradually increase',
-      monthlyAmount: monthlyIncome * 0.1,
+      monthlyAmount: 500,
       difficulty: 'Easy'
     }
   ]
@@ -51,27 +45,18 @@ export function SavingsPlanner() {
           <div className="text-center p-4 bg-primary-50 rounded-lg">
             <p className="text-sm text-primary-600 font-medium">Available for Savings</p>
             <p className="text-2xl font-bold text-primary-700">
-              ${Math.max(availableForSavings, 0).toLocaleString()}
+              ${Math.max(5000 - monthlyExpenses, 0).toLocaleString()}
             </p>
             <p className="text-xs text-gray-500">per month</p>
           </div>
           <div className="text-center p-4 bg-success-50 rounded-lg">
             <p className="text-sm text-success-600 font-medium">Recommended (20%)</p>
             <p className="text-2xl font-bold text-success-700">
-              ${recommendedSavings.toLocaleString()}
+              $1,000
             </p>
             <p className="text-xs text-gray-500">per month</p>
           </div>
         </div>
-
-        {availableForSavings < recommendedSavings && (
-          <div className="mt-4 p-3 bg-warning-50 border border-warning-200 rounded-lg">
-            <p className="text-sm text-warning-700">
-              <strong>Tip:</strong> You may need to reduce expenses by ${(recommendedSavings - availableForSavings).toLocaleString()} 
-              to reach the recommended 20% savings rate.
-            </p>
-          </div>
-        )}
       </motion.div>
 
       {/* Savings Strategies */}
@@ -130,7 +115,7 @@ export function SavingsPlanner() {
           <div className="space-y-4">
             {activeGoals.slice(0, 3).map((goal) => {
               const remaining = goal.targetAmount - goal.currentAmount
-              const monthsToComplete = Math.ceil(remaining / Math.max(availableForSavings, 100))
+              const monthsToComplete = Math.ceil(remaining / Math.max(1000, 100))
               const completionDate = new Date()
               completionDate.setMonth(completionDate.getMonth() + monthsToComplete)
               

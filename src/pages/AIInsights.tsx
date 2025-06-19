@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Brain, 
@@ -7,8 +7,7 @@ import {
   Lightbulb,
   Target,
   Zap,
-  RefreshCw,
-  Filter
+  RefreshCw
 } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { AIInsightCard } from '../components/AIInsightCard'

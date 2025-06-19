@@ -1,14 +1,11 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { 
   TrendingUp, 
   TrendingDown, 
-  DollarSign, 
   Target,
   Brain,
   Zap,
-  ArrowRight,
-  Plus
+  ArrowRight
 } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { QuickActions } from '../components/QuickActions'
@@ -19,13 +16,10 @@ import { AmountDisplay } from '../components/AmountDisplay'
 
 export function Dashboard() {
   const { 
-    expenses, 
-    budgets, 
     goals, 
     insights,
     getTotalExpenses, 
-    getTotalIncome,
-    user 
+    getTotalIncome
   } = useExpenseStore()
 
   const totalExpenses = getTotalExpenses()

@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
   TrendingUp, 
   PieChart, 
-  BarChart3, 
-  Calendar,
+  BarChart3,
   Download,
   Filter
 } from 'lucide-react'
@@ -18,7 +17,7 @@ export function Analytics() {
   const [selectedPeriod, setSelectedPeriod] = useState('month')
   const [chartType, setChartType] = useState('pie')
   
-  const { expenses, getExpensesByCategory } = useExpenseStore()
+  const { getExpensesByCategory } = useExpenseStore()
   const expensesByCategory = getExpensesByCategory()
 
   const periods = [

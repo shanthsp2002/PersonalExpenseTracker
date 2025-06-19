@@ -1,5 +1,4 @@
-import React from 'react'
-import { Plus, Scan, Receipt, Target, TrendingUp } from 'lucide-react'
+import { Plus, Scan, Target, TrendingUp } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'

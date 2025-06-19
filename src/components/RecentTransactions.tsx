@@ -1,6 +1,5 @@
-import React from 'react'
 import { motion } from 'framer-motion'
-import { ArrowUpRight, ArrowDownLeft, MoreHorizontal } from 'lucide-react'
+import { ArrowUpRight, ArrowDownLeft } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { format } from 'date-fns'
 import { AmountDisplay } from './AmountDisplay'

@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
-  User, 
-  Settings, 
   Bell, 
   Shield, 
   Download,
@@ -60,7 +58,6 @@ export function Profile() {
   }
 
   const totalExpenses = expenses.reduce((sum, exp) => sum + (exp.type === 'expense' ? exp.amount : 0), 0)
-  const totalIncome = expenses.reduce((sum, exp) => sum + (exp.type === 'income' ? exp.amount : 0), 0)
 
   return (
     <div className="space-y-6">

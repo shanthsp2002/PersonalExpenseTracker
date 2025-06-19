@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { X, Target, Calendar, Tag } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'

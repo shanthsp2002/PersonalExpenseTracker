@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Plus, AlertTriangle, CheckCircle, TrendingUp } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
@@ -7,9 +7,8 @@ import { BudgetForm } from '../components/BudgetForm'
 
 export function Budget() {
   const [showForm, setShowForm] = useState(false)
-  const { budgets, getBudgetStatus } = useExpenseStore()
+  const { budgets } = useExpenseStore()
   
-  const budgetStatus = getBudgetStatus()
   const totalBudget = budgets.reduce((sum, budget) => sum + budget.limit, 0)
   const totalSpent = budgets.reduce((sum, budget) => sum + budget.spent, 0)
   const overallPercentage = totalBudget > 0 ? (totalSpent / totalBudget) * 100 : 0

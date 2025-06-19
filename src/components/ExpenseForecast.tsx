@@ -1,4 +1,3 @@
-import React from 'react'
 import { motion } from 'framer-motion'
 import { TrendingUp, Calendar, AlertTriangle, Target } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
@@ -6,7 +5,7 @@ import { useExpenseStore } from '../store/expenseStore'
 import { addMonths, format } from 'date-fns'
 
 export function ExpenseForecast() {
-  const { expenses, budgets, user } = useExpenseStore()
+  const { expenses } = useExpenseStore()
 
   // Calculate historical monthly averages
   const monthlyAverages = expenses

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Calendar, 
@@ -6,7 +6,6 @@ import {
   TrendingUp, 
   AlertCircle,
   CheckCircle,
-  Clock,
   DollarSign,
   Zap
 } from 'lucide-react'
@@ -29,7 +28,6 @@ export function SmartPlanner() {
 
   const currentMonth = new Date().toLocaleString('default', { month: 'long', year: 'numeric' })
   const totalExpenses = expenses.reduce((sum, exp) => sum + (exp.type === 'expense' ? exp.amount : 0), 0)
-  const totalIncome = expenses.reduce((sum, exp) => sum + (exp.type === 'income' ? exp.amount : 0), 0)
   const projectedSavings = (user?.monthlyIncome || 0) - totalExpenses
 
   return (

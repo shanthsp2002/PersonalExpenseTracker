@@ -1,4 +1,3 @@
-import React from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { useExpenseStore } from '../store/expenseStore'
 import { format, subMonths, startOfMonth, endOfMonth, eachMonthOfInterval } from 'date-fns'

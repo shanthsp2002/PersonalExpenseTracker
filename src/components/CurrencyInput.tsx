@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { getCurrencySymbol, parseCurrencyAmount, formatCurrency } from '../utils/currency'
+import { useState, useEffect } from 'react'
+import { getCurrencySymbol, parseCurrencyAmount } from '../utils/currency'
 import { useExpenseStore } from '../store/expenseStore'
 
 interface CurrencyInputProps {
