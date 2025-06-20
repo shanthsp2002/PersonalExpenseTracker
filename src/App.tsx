@@ -9,23 +9,64 @@ import { Goals } from './pages/Goals'
 import { Profile } from './pages/Profile'
 import { AIInsights } from './pages/AIInsights'
 import { SmartPlanner } from './pages/SmartPlanner'
+import { Auth } from './pages/Auth'
+import { Settings } from './pages/Settings'
+import { Notifications } from './pages/Notifications'
+import { useExpenseStore } from './store/expenseStore'
 
 function App() {
+  const { user } = useExpenseStore()
+
+  // If no user is logged in, show auth page
+  if (!user) {
+    return (
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Routes>
+            <Route path="*" element={<Auth />} />
+          </Routes>
+          <Toaster 
+            position="top-center"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+              },
+            }}
+          />
+        </div>
+      </Router>
+    )
+  }
+
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/expenses" element={<Expenses />} />
-            <Route path="/budget" element={<Budget />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/goals" element={<Goals />} />
-            <Route path="/ai-insights" element={<AIInsights />} />
-            <Route path="/smart-planner" element={<SmartPlanner />} />
-            <Route path="/profile" element={<Profile />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          {/* Auth route */}
+          <Route path="/auth" element={<Auth />} />
+          
+          {/* Settings and Notifications (full screen) */}
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/notifications" element={<Notifications />} />
+          
+          {/* Main app routes with layout */}
+          <Route path="/*" element={
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/expenses" element={<Expenses />} />
+                <Route path="/budget" element={<Budget />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/goals" element={<Goals />} />
+                <Route path="/ai-insights" element={<AIInsights />} />
+                <Route path="/smart-planner" element={<SmartPlanner />} />
+                <Route path="/profile" element={<Profile />} />
+              </Routes>
+            </Layout>
+          } />
+        </Routes>
         <Toaster 
           position="top-center"
           toastOptions={{

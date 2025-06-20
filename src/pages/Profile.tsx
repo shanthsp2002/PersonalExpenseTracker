@@ -8,15 +8,20 @@ import {
   Edit,
   Camera,
   DollarSign,
-  Target
+  Target,
+  Settings,
+  LogOut,
+  ChevronRight
 } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { CurrencySelector } from '../components/CurrencySelector'
 import { CurrencyInput } from '../components/CurrencyInput'
 import { AmountDisplay } from '../components/AmountDisplay'
+import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 
 export function Profile() {
+  const navigate = useNavigate()
   const [isEditing, setIsEditing] = useState(false)
   const { user, setUser, expenses, budgets, goals } = useExpenseStore()
   
@@ -57,7 +62,42 @@ export function Profile() {
     toast.success('Data exported successfully!')
   }
 
+  const handleSignOut = () => {
+    if (confirm('Are you sure you want to sign out?')) {
+      // In a real app, this would clear auth tokens and redirect to login
+      navigate('/auth')
+      toast.success('Signed out successfully!')
+    }
+  }
+
   const totalExpenses = expenses.reduce((sum, exp) => sum + (exp.type === 'expense' ? exp.amount : 0), 0)
+
+  const menuItems = [
+    {
+      icon: Settings,
+      label: 'Settings',
+      description: 'Currency, notifications, and preferences',
+      onClick: () => navigate('/settings')
+    },
+    {
+      icon: Bell,
+      label: 'Notifications',
+      description: 'Manage your notification preferences',
+      onClick: () => navigate('/notifications')
+    },
+    {
+      icon: Shield,
+      label: 'Privacy & Security',
+      description: 'Data protection and account security',
+      onClick: () => navigate('/settings')
+    },
+    {
+      icon: Download,
+      label: 'Export Data',
+      description: 'Download your financial data',
+      onClick: handleExportData
+    }
+  ]
 
   return (
     <div className="space-y-6">
@@ -239,41 +279,43 @@ export function Profile() {
         </div>
       </motion.div>
 
-      {/* Settings */}
+      {/* Menu Items */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-900">Settings</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Account</h3>
         
-        <div className="card space-y-4">
-          <button className="flex items-center justify-between w-full p-3 hover:bg-gray-50 rounded-lg transition-colors">
-            <div className="flex items-center space-x-3">
-              <Bell className="w-5 h-5 text-gray-600" />
-              <span className="font-medium text-gray-900">Notifications</span>
-            </div>
-            <div className="w-5 h-5 bg-primary-600 rounded-full"></div>
-          </button>
-          
-          <button className="flex items-center justify-between w-full p-3 hover:bg-gray-50 rounded-lg transition-colors">
-            <div className="flex items-center space-x-3">
-              <Shield className="w-5 h-5 text-gray-600" />
-              <span className="font-medium text-gray-900">Privacy & Security</span>
-            </div>
-          </button>
+        <div className="card space-y-1">
+          {menuItems.map((item, index) => {
+            const Icon = item.icon
+            return (
+              <button
+                key={index}
+                onClick={item.onClick}
+                className="flex items-center justify-between w-full p-3 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <div className="flex items-center space-x-3">
+                  <Icon className="w-5 h-5 text-gray-600" />
+                  <div className="text-left">
+                    <p className="font-medium text-gray-900">{item.label}</p>
+                    <p className="text-sm text-gray-500">{item.description}</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-gray-400" />
+              </button>
+            )
+          })}
           
           <button 
-            onClick={handleExportData}
-            className="flex items-center justify-between w-full p-3 hover:bg-gray-50 rounded-lg transition-colors"
+            onClick={handleSignOut}
+            className="flex items-center justify-between w-full p-3 hover:bg-danger-50 rounded-lg transition-colors text-danger-600"
           >
             <div className="flex items-center space-x-3">
-              <Download className="w-5 h-5 text-gray-600" />
-              <span className="font-medium text-gray-900">Export Data</span>
+              <LogOut className="w-5 h-5" />
+              <div className="text-left">
+                <p className="font-medium">Sign Out</p>
+                <p className="text-sm text-danger-500">Sign out of your account</p>
+              </div>
             </div>
-          </button>
-          
-          <button className="flex items-center justify-between w-full p-3 hover:bg-gray-50 rounded-lg transition-colors text-danger-600">
-            <div className="flex items-center space-x-3">
-              <Trash2 className="w-5 h-5" />
-              <span className="font-medium">Delete Account</span>
-            </div>
+            <ChevronRight className="w-4 h-4 text-danger-400" />
           </button>
         </div>
       </div>
