@@ -1,18 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Bell, 
-  AlertTriangle, 
-  CheckCircle, 
-  Info, 
-  Target,
-  TrendingUp,
-  X,
-  MoreVertical,
-  Trash2,
-  MarkAsRead,
-  ArrowLeft
-} from 'lucide-react'
+import { Bell, AlertTriangle, CheckCircle, Info, Target, TrendingUp, X, MoreVertical, Trash2, BookMarked as MarkAsRead, ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { format } from 'date-fns'
 
