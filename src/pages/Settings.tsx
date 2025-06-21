@@ -4,7 +4,6 @@ import {
   Bell, 
   Shield, 
   Download,
-  Trash2,
   DollarSign,
   Globe,
   Moon,
@@ -52,7 +51,7 @@ export function Settings() {
     setSettings(prev => ({
       ...prev,
       [section]: {
-        ...prev[section as keyof typeof prev],
+        ...(prev[section as keyof typeof prev] as object),
         [key]: value
       }
     }))
@@ -364,16 +363,6 @@ export function Settings() {
               <div className="flex items-center space-x-3">
                 <Download className="w-5 h-5 text-gray-600" />
                 <span className="font-medium text-gray-900">Export Data</span>
-              </div>
-            </button>
-            
-            <button 
-              onClick={handleDeleteAccount}
-              className="flex items-center justify-between w-full p-3 hover:bg-danger-50 rounded-lg transition-colors text-danger-600"
-            >
-              <div className="flex items-center space-x-3">
-                <Trash2 className="w-5 h-5" />
-                <span className="font-medium">Delete Account</span>
               </div>
             </button>
           </div>

@@ -4,7 +4,6 @@ import {
   Bell, 
   Shield, 
   Download,
-  Trash2,
   Edit,
   Camera,
   DollarSign,
@@ -64,7 +63,8 @@ export function Profile() {
 
   const handleSignOut = () => {
     if (confirm('Are you sure you want to sign out?')) {
-      // In a real app, this would clear auth tokens and redirect to login
+      // Clear user data and redirect to auth
+      setUser(null)
       navigate('/auth')
       toast.success('Signed out successfully!')
     }

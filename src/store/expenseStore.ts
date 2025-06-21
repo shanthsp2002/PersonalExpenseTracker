@@ -79,7 +79,7 @@ interface ExpenseStore {
   addInsight: (insight: Omit<AIInsight, 'id'>) => void
   clearInsights: () => void
   
-  setUser: (user: User) => void
+  setUser: (user: User | null) => void
   
   // Computed values
   getTotalExpenses: () => number
@@ -95,15 +95,7 @@ export const useExpenseStore = create<ExpenseStore>()(
       budgets: [],
       goals: [],
       insights: [],
-      user: {
-        id: '1',
-        name: 'John Doe',
-        email: 'john@example.com',
-        currency: 'USD',
-        monthlyIncome: 5000,
-        savingsGoal: 1000,
-        riskTolerance: 'moderate'
-      },
+      user: null, // Start with no user - require login
       
       addExpense: (expense) => {
         const newExpense = {
