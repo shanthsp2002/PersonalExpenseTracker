@@ -31,14 +31,27 @@ export function Auth() {
     e.preventDefault()
     setIsLoading(true)
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    // Basic validation
+    if (!formData.email || !formData.password) {
+      toast.error('Please fill in all required fields')
+      setIsLoading(false)
+      return
+    }
 
     if (!isLogin && formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match')
       setIsLoading(false)
       return
     }
+
+    if (!isLogin && !formData.name) {
+      toast.error('Please enter your name')
+      setIsLoading(false)
+      return
+    }
+
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500))
 
     // Create user
     const user = {
@@ -79,6 +92,27 @@ export function Auth() {
     setIsLoading(false)
   }
 
+  const handleDemoLogin = async () => {
+    setIsLoading(true)
+    
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    const user = {
+      id: 'demo-user',
+      name: 'Demo User',
+      email: 'demo@expenseai.com',
+      currency: 'USD',
+      monthlyIncome: 5000,
+      savingsGoal: 1000,
+      riskTolerance: 'moderate' as const
+    }
+
+    setUser(user)
+    toast.success('Welcome to the demo!')
+    navigate('/')
+    setIsLoading(false)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
       <motion.div
@@ -104,6 +138,25 @@ export function Auth() {
             <p className="text-gray-500 text-sm">
               {isLogin ? 'Sign in to your account' : 'Start your financial journey'}
             </p>
+          </div>
+
+          {/* Demo Login Button */}
+          <button
+            onClick={handleDemoLogin}
+            disabled={isLoading}
+            className="w-full mb-4 p-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 flex items-center justify-center space-x-2"
+          >
+            <Zap className="w-4 h-4" />
+            <span>Try Demo Account</span>
+          </button>
+
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+            </div>
           </div>
 
           {/* Social Login */}
@@ -147,7 +200,7 @@ export function Auth() {
               <div className="w-full border-t border-gray-300" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with email</span>
+              <span className="px-2 bg-white text-gray-500">Or with email</span>
             </div>
           </div>
 
@@ -155,7 +208,7 @@ export function Auth() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
@@ -171,7 +224,7 @@ export function Auth() {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
@@ -186,7 +239,7 @@ export function Auth() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
@@ -209,7 +262,7 @@ export function Auth() {
 
             {!isLogin && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input

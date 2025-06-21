@@ -4,7 +4,8 @@ import {
   Receipt, 
   PieChart, 
   Brain,
-  Calendar
+  Calendar,
+  User
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -13,7 +14,7 @@ const navItems = [
   { path: '/expenses', icon: Receipt, label: 'Expenses' },
   { path: '/analytics', icon: PieChart, label: 'Analytics' },
   { path: '/ai-insights', icon: Brain, label: 'AI Insights' },
-  { path: '/smart-planner', icon: Calendar, label: 'Planner' },
+  { path: '/profile', icon: User, label: 'Profile' },
 ]
 
 export function BottomNavigation() {
