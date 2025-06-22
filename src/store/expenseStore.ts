@@ -95,7 +95,7 @@ export const useExpenseStore = create<ExpenseStore>()(
       budgets: [],
       goals: [],
       insights: [],
-      user: null, // Start with no user - require login
+      user: null, // Always start with no user - require authentication
       
       addExpense: (expense) => {
         const newExpense = {
@@ -234,6 +234,14 @@ export const useExpenseStore = create<ExpenseStore>()(
     }),
     {
       name: 'expense-store',
+      // Only persist user data, not the entire state
+      partialize: (state) => ({ 
+        user: state.user,
+        expenses: state.expenses,
+        budgets: state.budgets,
+        goals: state.goals,
+        insights: state.insights
+      }),
     }
   )
 )

@@ -7,7 +7,8 @@ import {
   Eye, 
   EyeOff,
   ArrowRight,
-  Zap
+  Zap,
+  AlertCircle
 } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { useNavigate } from 'react-router-dom'
@@ -17,6 +18,8 @@ export function Auth() {
   const [isLogin, setIsLogin] = useState(true)
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -27,90 +30,139 @@ export function Auth() {
   const { setUser } = useExpenseStore()
   const navigate = useNavigate()
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = 'Email is required'
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email address'
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = 'Password is required'
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters'
+    }
+
+    // Name validation for signup
+    if (!isLogin && !formData.name.trim()) {
+      newErrors.name = 'Name is required'
+    }
+
+    // Confirm password for signup
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match'
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+
     setIsLoading(true)
 
-    // Basic validation
-    if (!formData.email || !formData.password) {
-      toast.error('Please fill in all required fields')
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1500))
+
+      // Create user with actual form data
+      const user = {
+        id: Date.now().toString(),
+        name: isLogin ? formData.email.split('@')[0] : formData.name.trim(),
+        email: formData.email,
+        currency: 'USD',
+        monthlyIncome: 0,
+        savingsGoal: 0,
+        riskTolerance: 'moderate' as const
+      }
+
+      setUser(user)
+      
+      // Clear form
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+      })
+      
+      toast.success(isLogin ? `Welcome back, ${user.name}!` : `Account created successfully! Welcome, ${user.name}!`)
+      navigate('/')
+    } catch (error) {
+      toast.error('Something went wrong. Please try again.')
+    } finally {
       setIsLoading(false)
-      return
     }
-
-    if (!isLogin && formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match')
-      setIsLoading(false)
-      return
-    }
-
-    if (!isLogin && !formData.name) {
-      toast.error('Please enter your name')
-      setIsLoading(false)
-      return
-    }
-
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
-    // Create user
-    const user = {
-      id: Date.now().toString(),
-      name: formData.name || formData.email.split('@')[0],
-      email: formData.email,
-      currency: 'USD',
-      monthlyIncome: 0,
-      savingsGoal: 0,
-      riskTolerance: 'moderate' as const
-    }
-
-    setUser(user)
-    toast.success(isLogin ? 'Welcome back!' : 'Account created successfully!')
-    navigate('/')
-    setIsLoading(false)
   }
 
   const handleSocialLogin = async (provider: string) => {
     setIsLoading(true)
     
-    // Simulate social login
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    const user = {
-      id: Date.now().toString(),
-      name: `User from ${provider}`,
-      email: `user@${provider.toLowerCase()}.com`,
-      currency: 'USD',
-      monthlyIncome: 0,
-      savingsGoal: 0,
-      riskTolerance: 'moderate' as const
-    }
+    try {
+      // Simulate social login API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // For demo purposes, create a user with provider info
+      // In real app, this would come from the OAuth provider
+      const user = {
+        id: `${provider.toLowerCase()}-${Date.now()}`,
+        name: `Demo User`, // In real app, this comes from OAuth
+        email: `demo@${provider.toLowerCase()}.com`, // In real app, this comes from OAuth
+        currency: 'USD',
+        monthlyIncome: 0,
+        savingsGoal: 0,
+        riskTolerance: 'moderate' as const
+      }
 
-    setUser(user)
-    toast.success(`Signed in with ${provider}!`)
-    navigate('/')
-    setIsLoading(false)
+      setUser(user)
+      toast.success(`Successfully signed in with ${provider}!`)
+      navigate('/')
+    } catch (error) {
+      toast.error(`Failed to sign in with ${provider}. Please try again.`)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleDemoLogin = async () => {
     setIsLoading(true)
     
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    const user = {
-      id: 'demo-user',
-      name: 'Demo User',
-      email: 'demo@expenseai.com',
-      currency: 'USD',
-      monthlyIncome: 5000,
-      savingsGoal: 1000,
-      riskTolerance: 'moderate' as const
-    }
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      const user = {
+        id: 'demo-user',
+        name: 'Demo User',
+        email: 'demo@expenseai.com',
+        currency: 'USD',
+        monthlyIncome: 5000,
+        savingsGoal: 1000,
+        riskTolerance: 'moderate' as const
+      }
 
-    setUser(user)
-    toast.success('Welcome to the demo!')
-    navigate('/')
-    setIsLoading(false)
+      setUser(user)
+      toast.success('Welcome to the demo!')
+      navigate('/')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }))
+    }
   }
 
   return (
@@ -133,10 +185,10 @@ export function Auth() {
         <div className="bg-white rounded-2xl shadow-xl p-6">
           <div className="text-center mb-6">
             <h2 className="text-xl font-semibold text-gray-900">
-              {isLogin ? 'Welcome back' : 'Create account'}
+              {isLogin ? 'Welcome back' : 'Create your account'}
             </h2>
             <p className="text-gray-500 text-sm">
-              {isLogin ? 'Sign in to your account' : 'Start your financial journey'}
+              {isLogin ? 'Sign in to your account' : 'Start your financial journey today'}
             </p>
           </div>
 
@@ -144,7 +196,7 @@ export function Auth() {
           <button
             onClick={handleDemoLogin}
             disabled={isLoading}
-            className="w-full mb-4 p-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 flex items-center justify-center space-x-2"
+            className="w-full mb-4 p-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg font-medium hover:from-primary-600 hover:to-primary-700 transition-all duration-200 flex items-center justify-center space-x-2 disabled:opacity-50"
           >
             <Zap className="w-4 h-4" />
             <span>Try Demo Account</span>
@@ -164,7 +216,7 @@ export function Auth() {
             <button
               onClick={() => handleSocialLogin('Google')}
               disabled={isLoading}
-              className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-bold">G</span>
@@ -175,7 +227,7 @@ export function Auth() {
             <button
               onClick={() => handleSocialLogin('Facebook')}
               disabled={isLoading}
-              className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-bold">f</span>
@@ -186,7 +238,7 @@ export function Auth() {
             <button
               onClick={() => handleSocialLogin('LinkedIn')}
               disabled={isLoading}
-              className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
               <div className="w-5 h-5 bg-blue-700 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-bold">in</span>
@@ -208,34 +260,46 @@ export function Auth() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="input pl-10"
-                    placeholder="Your full name"
-                    required={!isLogin}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    className={`input pl-10 ${errors.name ? 'border-red-500 focus:ring-red-500' : ''}`}
+                    placeholder="Enter your full name"
+                    disabled={isLoading}
                   />
                 </div>
+                {errors.name && (
+                  <div className="flex items-center space-x-1 mt-1">
+                    <AlertCircle className="w-4 h-4 text-red-500" />
+                    <p className="text-red-500 text-sm">{errors.name}</p>
+                  </div>
+                )}
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="input pl-10"
-                  placeholder="your@email.com"
-                  required
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className={`input pl-10 ${errors.email ? 'border-red-500 focus:ring-red-500' : ''}`}
+                  placeholder="Enter your email"
+                  disabled={isLoading}
                 />
               </div>
+              {errors.email && (
+                <div className="flex items-center space-x-1 mt-1">
+                  <AlertCircle className="w-4 h-4 text-red-500" />
+                  <p className="text-red-500 text-sm">{errors.email}</p>
+                </div>
+              )}
             </div>
 
             <div>
@@ -245,19 +309,26 @@ export function Auth() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="input pl-10 pr-10"
-                  placeholder="••••••••"
-                  required
+                  onChange={(e) => handleInputChange('password', e.target.value)}
+                  className={`input pl-10 pr-10 ${errors.password ? 'border-red-500 focus:ring-red-500' : ''}`}
+                  placeholder="Enter your password"
+                  disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {errors.password && (
+                <div className="flex items-center space-x-1 mt-1">
+                  <AlertCircle className="w-4 h-4 text-red-500" />
+                  <p className="text-red-500 text-sm">{errors.password}</p>
+                </div>
+              )}
             </div>
 
             {!isLogin && (
@@ -268,21 +339,39 @@ export function Auth() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="input pl-10"
-                    placeholder="••••••••"
-                    required={!isLogin}
+                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                    className={`input pl-10 ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500' : ''}`}
+                    placeholder="Confirm your password"
+                    disabled={isLoading}
                   />
                 </div>
+                {errors.confirmPassword && (
+                  <div className="flex items-center space-x-1 mt-1">
+                    <AlertCircle className="w-4 h-4 text-red-500" />
+                    <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {isLogin && (
+              <div className="flex items-center justify-between">
+                <label className="flex items-center">
+                  <input type="checkbox" className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500" />
+                  <span className="ml-2 text-sm text-gray-600">Remember me</span>
+                </label>
+                <button type="button" className="text-sm text-primary-600 hover:text-primary-700">
+                  Forgot password?
+                </button>
               </div>
             )}
 
             <motion.button
               type="submit"
               disabled={isLoading}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="btn-primary w-full flex items-center justify-center space-x-2"
+              whileHover={{ scale: isLoading ? 1 : 1.02 }}
+              whileTap={{ scale: isLoading ? 1 : 0.98 }}
+              className="btn-primary w-full flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -300,13 +389,35 @@ export function Auth() {
             <p className="text-gray-500 text-sm">
               {isLogin ? "Don't have an account?" : 'Already have an account?'}
               <button
-                onClick={() => setIsLogin(!isLogin)}
+                onClick={() => {
+                  setIsLogin(!isLogin)
+                  setErrors({})
+                  setFormData({
+                    name: '',
+                    email: '',
+                    password: '',
+                    confirmPassword: ''
+                  })
+                }}
                 className="text-primary-600 font-medium ml-1 hover:text-primary-700"
+                disabled={isLoading}
               >
                 {isLogin ? 'Sign up' : 'Sign in'}
               </button>
             </p>
           </div>
+
+          {/* Terms and Privacy */}
+          {!isLogin && (
+            <div className="text-center mt-4">
+              <p className="text-xs text-gray-500">
+                By creating an account, you agree to our{' '}
+                <button className="text-primary-600 hover:text-primary-700">Terms of Service</button>
+                {' '}and{' '}
+                <button className="text-primary-600 hover:text-primary-700">Privacy Policy</button>
+              </p>
+            </div>
+          )}
         </div>
       </motion.div>
     </div>
