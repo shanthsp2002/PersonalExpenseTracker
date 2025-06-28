@@ -23,6 +23,11 @@ function App() {
       <Router>
         <div className="min-h-screen bg-gray-50">
           <Routes>
+            {/* OAuth callback routes */}
+            <Route path="/auth/google/callback" element={<Auth />} />
+            <Route path="/auth/facebook/callback" element={<Auth />} />
+            <Route path="/auth/linkedin/callback" element={<Auth />} />
+            {/* Default auth route */}
             <Route path="*" element={<Auth />} />
           </Routes>
           <Toaster 
@@ -44,6 +49,11 @@ function App() {
     <Router>
       <div className="min-h-screen bg-gray-50">
         <Routes>
+          {/* OAuth callback routes (in case user is already logged in) */}
+          <Route path="/auth/google/callback" element={<Auth />} />
+          <Route path="/auth/facebook/callback" element={<Auth />} />
+          <Route path="/auth/linkedin/callback" element={<Auth />} />
+          
           {/* Auth route */}
           <Route path="/auth" element={<Auth />} />
           

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { 
   Mail, 
@@ -12,6 +12,14 @@ import {
 } from 'lucide-react'
 import { useExpenseStore } from '../store/expenseStore'
 import { useNavigate } from 'react-router-dom'
+import { 
+  initiateGoogleLogin, 
+  initiateFacebookLogin, 
+  initiateLinkedInLogin,
+  isOAuthCallback,
+  exchangeCodeForToken,
+  OAuthUser
+} from '../utils/oauth'
 import toast from 'react-hot-toast'
 
 export function Auth() {
@@ -29,6 +37,47 @@ export function Auth() {
 
   const { setUser } = useExpenseStore()
   const navigate = useNavigate()
+
+  // Handle OAuth callbacks
+  useEffect(() => {
+    const handleOAuthCallback = async () => {
+      const callback = isOAuthCallback()
+      if (callback) {
+        setIsLoading(true)
+        try {
+          const oauthUser = await exchangeCodeForToken(callback.code, callback.provider as any)
+          
+          // Create user from OAuth data
+          const user = {
+            id: `${callback.provider}-${oauthUser.id}`,
+            name: oauthUser.name,
+            email: oauthUser.email,
+            currency: 'USD',
+            monthlyIncome: 0,
+            savingsGoal: 0,
+            riskTolerance: 'moderate' as const,
+            picture: oauthUser.picture
+          }
+
+          setUser(user)
+          toast.success(`Successfully signed in with ${callback.provider}!`)
+          
+          // Clean up URL and navigate
+          window.history.replaceState({}, document.title, '/')
+          navigate('/')
+        } catch (error) {
+          console.error('OAuth callback error:', error)
+          toast.error(`Failed to sign in with ${callback.provider}. Please try again.`)
+          // Clean up URL on error
+          window.history.replaceState({}, document.title, '/auth')
+        } finally {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    handleOAuthCallback()
+  }, [setUser, navigate])
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -76,7 +125,7 @@ export function Auth() {
 
       // Create user with actual form data
       const user = {
-        id: Date.now().toString(),
+        id: `email-${Date.now()}`,
         name: isLogin ? formData.email.split('@')[0] : formData.name.trim(),
         email: formData.email,
         currency: 'USD',
@@ -104,31 +153,29 @@ export function Auth() {
     }
   }
 
-  const handleSocialLogin = async (provider: string) => {
+  const handleSocialLogin = async (provider: 'google' | 'facebook' | 'linkedin') => {
+    if (isLoading) return
+    
     setIsLoading(true)
     
     try {
-      // Simulate social login API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Show loading message
+      toast.loading(`Redirecting to ${provider}...`, { id: 'oauth-loading' })
       
-      // For demo purposes, create a user with provider info
-      // In real app, this would come from the OAuth provider
-      const user = {
-        id: `${provider.toLowerCase()}-${Date.now()}`,
-        name: `Demo User`, // In real app, this comes from OAuth
-        email: `demo@${provider.toLowerCase()}.com`, // In real app, this comes from OAuth
-        currency: 'USD',
-        monthlyIncome: 0,
-        savingsGoal: 0,
-        riskTolerance: 'moderate' as const
+      // Small delay to show the loading state
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
+      // Initiate OAuth flow
+      if (provider === 'google') {
+        initiateGoogleLogin()
+      } else if (provider === 'facebook') {
+        initiateFacebookLogin()
+      } else if (provider === 'linkedin') {
+        initiateLinkedInLogin()
       }
-
-      setUser(user)
-      toast.success(`Successfully signed in with ${provider}!`)
-      navigate('/')
     } catch (error) {
-      toast.error(`Failed to sign in with ${provider}. Please try again.`)
-    } finally {
+      console.error(`${provider} OAuth error:`, error)
+      toast.error(`Failed to initiate ${provider} login. Please try again.`)
       setIsLoading(false)
     }
   }
@@ -163,6 +210,24 @@ export function Auth() {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }))
     }
+  }
+
+  // Show loading screen during OAuth callback
+  if (isOAuthCallback()) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-primary-100 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-16 h-16 bg-gradient-to-r from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <Zap className="w-8 h-8 text-white animate-pulse" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Signing you in...</h2>
+          <p className="text-gray-500">Please wait while we complete your authentication.</p>
+          <div className="mt-4">
+            <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin mx-auto"></div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -214,7 +279,7 @@ export function Auth() {
           {/* Social Login */}
           <div className="space-y-3 mb-6">
             <button
-              onClick={() => handleSocialLogin('Google')}
+              onClick={() => handleSocialLogin('google')}
               disabled={isLoading}
               className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
@@ -225,7 +290,7 @@ export function Auth() {
             </button>
 
             <button
-              onClick={() => handleSocialLogin('Facebook')}
+              onClick={() => handleSocialLogin('facebook')}
               disabled={isLoading}
               className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
@@ -236,7 +301,7 @@ export function Auth() {
             </button>
 
             <button
-              onClick={() => handleSocialLogin('LinkedIn')}
+              onClick={() => handleSocialLogin('linkedin')}
               disabled={isLoading}
               className="w-full flex items-center justify-center space-x-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
             >
